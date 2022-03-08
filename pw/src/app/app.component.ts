@@ -45,7 +45,7 @@ export class AppComponent {
     this.includeLetters = event.target.checked;
   }
 
-  onChnageNumbers(event: any) {
+  onChangeNumbers(event: any) {
     this.includeNumbers = event.target.checked;
   }
 
