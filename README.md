@@ -158,3 +158,139 @@ now
 
 Then you can take the url and see you app being deployed! For example:
 https://pw-eight-peach.vercel.app
+
+## Components
+
+To make an angular compoent
+
+```sh
+
+ng generate component card
+# or "ng g c card" for short
+```
+
+### Pass datat from parent to child
+
+For a child component to receive data from a parent, for exmaple, something like this
+
+```html
+<child-component
+  [some_property_in_child_comp]="property_in_parent_comp"
+></child-component>
+```
+
+```typescript
+// in child component
+Input()some_property_in_child_comp = ''
+
+```
+
+```typescript
+// in parent component
+property_in_parent_comp = 'stuff you can send to child';
+```
+
+### ngFor
+
+ngFor is a structrual directive.
+Use \*ngFor to iterate over an iterable to avoid repetitive code.
+
+```html
+<child-comp *ngFor="let post of posts"
+ [some_prop]="post.something
+> </child-comp>
+```
+
+#### Style the whole component
+
+For exmaple, if you want to select the whole `app-root` component, you can't just use below inside the app.component.cs
+
+```css
+app-root {
+  display: flex;
+}
+```
+
+Instead, you need to use `:host` to achieve it
+
+```css
+:host {
+  display: flex;
+}
+```
+
+### Pipe
+
+Pipes are basically some (built-in)functions you can use in the template to transform data. https://angular.io/api?type=pipe For example:
+
+```html
+{{name | titlecase}}
+```
+
+Use the date pipe
+
+```html
+{{dateStr | date: "m/d/Y"}}
+```
+
+One pipe that is useful for debugging purpose is jsonPipe.
+
+To use it, simply display anywhere in the tempalte for a json object:
+
+```html
+{{ myObj | json}}
+```
+
+#### Custom pipe
+
+To create a pipe, use ng command
+
+```sh
+ng generate pipe convert
+
+```
+
+Then you can do whatevet you want with it. Not only you can use it in the template interpolation but you can also use it just about everywhere. For example, say you only want to show the element when the coverted value is greater than certain threshold.
+
+```html
+<div *ngIf="(miles | convert: 'km') > 10">{{miles | convert: "km"}}</div>
+```
+
+#### Chain pipes
+
+You can also chain the pipes
+
+```html
+{{ miles | convert: 'm' | number: '1.0-2'}}
+```
+
+## Bootstrap
+
+```sh
+npm install bootstrap
+```
+
+Then go to `src/style.css` and add
+
+```css
+@import 'bootstrap/dist/css/bootstrap.css';
+```
+
+## Directives
+
+- ngFor
+- ngClass: attribute directive
+
+```html
+<nav>
+  <ul class="pagination">
+    <li
+      class="page-item"
+      [ngClass]="{active: i===currnetPage}"
+      *ngFor="let image of images; let i = index"
+    >
+      <a class="page-link">{{ i + 1 }}</a>
+    </li>
+  </ul>
+</nav>
+```
