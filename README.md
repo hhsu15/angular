@@ -276,21 +276,70 @@ Then go to `src/style.css` and add
 @import 'bootstrap/dist/css/bootstrap.css';
 ```
 
-## Directives
+## Angular Directives list
 
-- ngFor
-- ngClass: attribute directive
+- \*ngIf: This we already saw
+- \*ngFor: structural directive
+- [ngClass]: attribute directive, for style.
 
 ```html
 <nav>
   <ul class="pagination">
     <li
       class="page-item"
-      [ngClass]="{active: i===currnetPage}"
+      [ngClass]="{active: i === currnetPage}"
       *ngFor="let image of images; let i = index"
     >
       <a class="page-link">{{ i + 1 }}</a>
     </li>
   </ul>
 </nav>
+```
+
+Actually, ngClass is very flexible. You can also do something like this:
+
+```html
+<div [ngClass]="someMethod()">...</div>
+```
+
+where someMethod can return a class string, or an array of class strings. NgClass is cabable of applying those to class attribute.
+
+- ngSwitch
+  Similar to ngIf but you can apply more cases.
+
+```html
+<div [ngSwitch]="currentPage">
+  <div *ngSwitchCase="0">Current Page is zero</div>
+  <div *ngSwitchCase="1">Current Page is one</div>
+  <div *ngSwitchCase="2">Current Page is two</div>
+  <div *ngSwitchCase="3">Current Page is two</div>
+  <div *ngSwitchDefault>Unknow page</div>
+</div>
+```
+
+#### Ng-container
+
+ng-container is an invisible html element for purpose of apllying structural directive - since you cannot apply more than one structrual directive in the same element.
+
+### Custom directive
+
+Run
+
+```sh
+ng generate directive myDirective
+```
+
+In the myDirevtive you can create your own directive. It can take in the element which you apply the directive to and mess around with it.
+
+```typescript
+@Directive({
+  selector: '[appClass]'
+})
+export class ClassDirective {
+  @Input()
+  backgroundColor = '';
+  constructor(private element: ElementRef) {
+    this.element.nativeElement.style.backgroundColor = 'orange';
+  }
+}
 ```
