@@ -26,7 +26,11 @@ export class AppComponent {
     }
   ];
 
-  onChangePage(pageNum: number) {
-    this.currentPage = pageNum;
+  checkWindowIndex(index: number) {
+    return Math.abs(this.currentPage - index) < 5;
   }
+
+  // onChangePage(pageNum: number) {
+  //   this.currentPage = pageNum;
+  // }
 }
