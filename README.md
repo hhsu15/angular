@@ -16,6 +16,8 @@ ng serve # or npm start
 
 ## Angular template syntax
 
+Refer to `pw`
+
 ### Event binding
 
 The event binding syntax uses
@@ -161,6 +163,7 @@ https://pw-eight-peach.vercel.app
 
 ## Components
 
+Refer to `cards`
 To make an angular compoent
 
 ```sh
@@ -219,7 +222,9 @@ Instead, you need to use `:host` to achieve it
 }
 ```
 
-### Pipe
+## Pipe
+
+Refer to `pipes`
 
 Pipes are basically some (built-in)functions you can use in the template to transform data. https://angular.io/api?type=pipe For example:
 
@@ -278,6 +283,8 @@ Then go to `src/style.css` and add
 
 ## Angular Directives list
 
+Refer to `pages`
+
 - \*ngIf: This we already saw
 - \*ngFor: structural directive
 - [ngClass]: attribute directive, for style.
@@ -323,11 +330,15 @@ ng-container is an invisible html element for purpose of apllying structural dir
 
 ### Custom directive
 
+`Refer to pages`
+
 Run
 
 ```sh
 ng generate directive myDirective
 ```
+
+#### Attribute Directive
 
 In the myDirevtive you can create your own directive. It can take in the element which you apply the directive to and mess around with it.
 
@@ -342,4 +353,123 @@ export class ClassDirective {
     this.element.nativeElement.style.backgroundColor = 'orange';
   }
 }
+```
+
+#### Structual Directive
+
+You can create a custom structural directive. Refer to `pages/src/app/times.directive.ts` where we created a [appTimes].
+
+## Modules in Angular
+
+Refer to `comps`
+Use Module to organize a group of components.
+
+```
+ng generate module {module_name}
+```
+
+To create a component under a module,
+
+```sh
+ng generate component {module_folder/component_name}
+# for example
+ng generate component elements/ElementsHome
+```
+
+In order for app.component.html to use a component under another module, we need to do a little set up. Refer to `elements.module.ts`
+
+Essentially,
+
+Step 1 - create a component under a module using
+
+```sh
+ng g c {module}/{compoent}
+```
+
+Step 2 - export the compoent
+
+- in the `xxx.module.ts`, add the component you want to `exports` to the outside world.
+
+Step 2 - import the entire module in the app.module.ts
+
+- in the app.module.ts, import the entire module (not the component) and add it to the import key
+
+## Routing
+
+Refer to `comps`
+This is actually really easy!
+In the `{component}-routing.module.ts` file,
+
+1. import your component
+2. add routing rules
+
+```ts
+import { ElementsHomeComponent } from './elements-home/elements-home.component';
+
+// mange the routes rules here
+const routes: Routes = [{ path: 'elements', component: ElementsHomeComponent }];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class ElementsRoutingModule {}
+```
+
+Then, when you go to say `localhost:4200/elements` you will see the template being rendered.
+
+### routerLink
+
+Use routerLink to avoid reloading the entire page when chaning the routing path.
+
+```html
+<a routerLink="/elements">Elements</a>
+```
+
+## Semantic UI
+
+```sh
+npm install sementic-ui-css
+```
+
+In `style.css` file,
+
+```css
+@import 'semantic-ui-css/semantic.css';
+```
+
+### RouterLinkActive
+
+Refer to `comps`.
+
+When an anchor element (<a></a>) is selected we can use something like `routterLinkActive="active"` to easily apply the style class "active" so you don't have to do it yourself! neat!
+
+### Routing rules
+
+The routing rules are based on the order of the imported modules in the `app.module.ts`. So you can easily change the order of the modules being imported.
+
+## Lazy Loading
+
+Refer to `comps`.
+
+Tell angular to just load the bare amount of code for what is requested. As additional modules are needed by user it will then load up those modules. Angular makes this possible and very easy!
+
+What you have to do is to dynamically import the component when user requests the route. It's done by something like this:
+
+```ts
+// in app-routing.module.ts
+const routes: Routes = [
+  {
+    path: 'elements',
+    loadChildren: () =>
+      import('./elements/elements.module').then(m => m.ElementsModule)
+  },
+  ...
+]
+```
+
+and then in `elements-routing.module.ts`, make sure you clear out your path because otherwise the path gets accumulated (like elements/elements)
+
+```ts
+const routes: Routes = [{ path: '', component: ElementsHomeComponent }];
 ```

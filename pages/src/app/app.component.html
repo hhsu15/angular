@@ -1,12 +1,12 @@
 <nav>
   <ul class="pagination">
-    <li class="class page-item" [ngClass]="{ disabled: currentPage === 0 }">
+    <li class="class page-item" [appClass]="{ disabled: currentPage === 0 }">
       <a class="page-link" (click)="currentPage = currentPage - 1">Prev</a>
     </li>
     <ng-container *ngFor="let image of images; let i = index">
       <li
         class="page-item"
-        [ngClass]="{ active: i === currentPage }"
+        [appClass]="{ active: i === currentPage }"
         (click)="currentPage = i"
         *ngIf="checkWindowIndex(i)"
       >
@@ -27,5 +27,12 @@
 </div>
 
 <!-- using a custom directive -->
-<h4 appClass [backgroundColor]="'yellow'">{{ images[currentPage].title }}</h4>
+<!-- <h4 [appClass]="'yellow'">{{ images[currentPage].title }}</h4> -->
+
 <img [src]="images[currentPage].url" />
+
+<!-- Custom Structual directive -->
+<!-- examples here shows you can also reference the context data -->
+<ul *appTimes="images.length; let idx = index">
+  <li>Hi there {{ idx }}</li>
+</ul>
