@@ -473,3 +473,38 @@ and then in `elements-routing.module.ts`, make sure you clear out your path beca
 ```ts
 const routes: Routes = [{ path: '', component: ElementsHomeComponent }];
 ```
+
+## Widget Module
+
+Refer to `comps`.
+Widget Module provides reusable components. By convension, they are placed in a file called `Shared Module`.
+
+See the implementation in `comps/app/shared` where we implemented a simple divider component.
+
+In order to import a component from a different module, you first have to export the compoent from the .module.ts and add the component to `exports`.
+
+And then, for another module who wants to use the component it can import the entire module that contains that componet.
+
+### Ng-Content
+
+Refer to `comps/app/shared/divider.component.html`
+
+<ng-content> is a special angular element. Anything you put in the selector you will be going into the <ng-content></ng-content>.For example:
+
+In the parent template which uses app-some-compoenent:
+
+```html
+<app-some-component>
+  Hello
+  <app-some-component></app-some-component
+></app-some-component>
+```
+
+In the some-component tempalte
+
+```html
+<h1>
+  <!-- this par will become "Hello" -->
+  <ng-content></ng-content>
+</h1>
+```
