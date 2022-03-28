@@ -485,7 +485,7 @@ In order to import a component from a different module, you first have to export
 
 And then, for another module who wants to use the component it can import the entire module that contains that componet.
 
-### Ng-Content
+### NgContent
 
 Refer to `comps/app/shared/divider.component.html`
 
@@ -508,3 +508,16 @@ In the some-component tempalte
   <ng-content></ng-content>
 </h1>
 ```
+
+ng-content can only be used once in a template. To get around this, you can use the `select` property to distingush. Refer to `comps/app/elements/segment/segment.component.html`.
+
+##### Hide display for ng-content when not provided
+
+A little trick to not display the element for an ng-content when it's not provided. Use the css:
+
+```css
+div.ui.icon.header:empty {
+  display: none;
+}
+```
+
