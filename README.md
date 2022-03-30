@@ -521,3 +521,19 @@ div.ui.icon.header:empty {
 }
 ```
 
+#### RouterLink
+
+A little trick about the routerLink attribute, you can use `[rountterLink]="[]"`, elements in the array will be joined to form the link, so you can do something like this:
+
+```html
+<a
+  class="item"
+  [routerLink]="['./', someLinkProperty]"
+  routerLinkActive="active"
+  >Biography
+</a>
+```
+
+##### RouterLinkActive
+
+Angular looks at the url to determine if the anchor is active. If it "contains" the route it will think it's active. You can use `routerLinkActiveOptions={exact=true}`

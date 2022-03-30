@@ -5,3 +5,14 @@
   [data]="data"
   [headers]="headers"
 ></app-table>
+<app-tabs>
+  <a
+    class="item"
+    [routerLink]="['./']"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    >Biography</a
+  >
+  <a class="item" routerLink="./company" routerLinkActive="active">Company</a>
+  <a class="item" routerLink="./partners" routerLinkActive="active">Partners</a>
+</app-tabs>
