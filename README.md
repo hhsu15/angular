@@ -534,6 +534,102 @@ A little trick about the routerLink attribute, you can use `[rountterLink]="[]"`
 </a>
 ```
 
-##### RouterLinkActive
+#### RouterLinkActive
 
 Angular looks at the url to determine if the anchor is active. If it "contains" the route it will think it's active. You can use `routerLinkActiveOptions={exact=true}`
+
+## Modal
+
+Refer to `comps/app/mods/modal`
+
+Issue/difficulties with modal
+
+- In order to the modal to show in the center of the screen, it has to have the css style property of "position: absolute". The issue is that it could be set as "relative" when it's wrapped by some element.
+- The way pretty much all the framework solves this problem is the same: It takes the model element and appends directly inside the <body> element.
+- Refer to `comps/app/mods/modal/modal.compone nt.ts `
+
+## Lifecycyle Hook
+
+- ngOnInit (called once - the first time component displayed on the screen. After properties are passed down from the parent)
+- ngOnChanges (called anytime a property is changed)
+- ngOnDestroy (called once when user navigate to a different route)
+
+`OnInt` interface and a like is 100% optional. You don't need it to use ngOnInit.
+
+#### Evet Bubbling
+
+By default javascript has something called event bubbling effect - meaning that the event goes up to the ultimate parent that has the same event. So if you have click event for multiple elements in a nested structure it will be bubbling up to the highest parent to handle that.
+
+To prevent the event bubbling from going up, we will add `$event.stopPropagation()` for the element that you don't want to have the effct.
+
+Refer to `comps/app/mods/modal/modal.component.html`
+
+#### Use ng-content to display custom button if supplied
+
+Refer to `comps/app/mods/modal/modal.component.html`
+
+We will be using just css to solve this issue. The below css will do the trick: if ng-content is not provided then css will display none.
+
+```css
+.actions:empty {
+  display: none;
+}
+```
+
+## TypeScript
+
+Intro for TypeScript.
+
+TypeScript really only exists during the development to catch errors. Once it's complied it has zero effect.
+
+```bash
+npm install typescript ts-node-dev
+
+# to start the server run
+ts-node-dev --no-notify --respawn index.ts
+
+```
+
+### Use Interface to create a custom type
+
+You can use it to validate the data. For example,
+
+```ts
+interface PostGateKeeper {
+  title: string;
+  days: number;
+  published: boolean;
+}
+
+const printPost = (postToPrint: PostGateKeeper) => {
+  console.log(`${postToPrint.title} - ${postToPrint.days}`);
+};
+
+const post = { title: 'fefee', days: 10, published: true };
+
+printPost(post);
+```
+
+### TypeScript Class
+
+```ts
+// Class
+class Car {
+  // when you lay your constructor with access modifier it will automatically
+  // assign attribute. e.g, this.color
+  constructor(public color: string) {}
+}
+
+car = new Car('red');
+console.log(car.color); //red
+```
+
+### TypeScript Decorator
+
+You can create a typescript project by running
+
+```sh
+npx tsc --init
+```
+
+In the `tsconfig.json` file, enable "experimentalDecorators" and change "strict" to false.
