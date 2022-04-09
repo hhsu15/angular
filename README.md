@@ -633,3 +633,36 @@ npx tsc --init
 ```
 
 In the `tsconfig.json` file, enable "experimentalDecorators" and change "strict" to false.
+
+#### Decorator Factiory
+
+A decorator factory is a decorator that returns a functiton.
+
+```ts
+const Component = (target: any) => {
+  return () => {};
+};
+
+// to use it you will add ()
+@Component()
+class Person {}
+```
+
+### Module system
+
+Angular uses the module system to allowing import and export to another module/file.
+
+```ts
+// car.ts
+
+export class Car {
+  year = 2000;
+}
+```
+
+```ts
+//index.ts
+import { Car } from './Car';
+
+const car = new Car();
+```

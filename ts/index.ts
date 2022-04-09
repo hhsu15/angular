@@ -25,7 +25,8 @@ class Car {
 
 const Component = (target: any) => {
   console.log(target);
-  target.say();
+  let obj = new target();
+  obj.say();
 };
 
 @Component
@@ -34,3 +35,7 @@ class Person {
     console.log('Hello');
   }
 }
+
+import { Cat } from './Cat';
+let cat = new Cat();
+console.log(cat.age);
