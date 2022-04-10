@@ -666,3 +666,81 @@ import { Car } from './Car';
 
 const car = new Car();
 ```
+
+#### Generic Class
+
+You can create a genric class that can dynamically take the type you provide in the "<>" and pass to where it's needed.
+By convention, people like to use letter "T" for the variale name.
+
+```ts
+class ValueHolder<T> {
+  value: T;
+}
+
+const numberHolder = new ValueHolder<number>();
+numberHolder.value = 10;
+```
+
+#### Generic function
+
+```ts
+// Generic function
+const valueWrapper = <T>(value: T): T[] => {
+  return [value];
+};
+
+// optional if you want to provide type
+// same as
+// const value = valueWrapper<number>(10)
+const value = valueWrapper(10);
+// return array of numbers "number[]"
+
+console.log(valueWrapper<boolean>(true));
+```
+
+## Service
+
+Refer to `wsearch`.
+To create an angular service, run
+
+```sh
+ng c service <serviceName>
+```
+
+#### Search Input
+
+By default, if you have an input element inside of a form element, when you hit the enter key, it will trigger a form Submit event - you can use this event as like:
+
+```ts
+<form (submit)="onFormSubmit()">
+  <input (input)="onInput($event)" />
+</form>
+```
+
+### Output EventEmitter
+
+When you use EventEmitter you can pass a value to communicate. The way to make it work:
+
+```ts
+
+@Output() somEvent = new EventEmitter<string>()
+
+onTrigger(){
+  this.someEvent.emit("hello")
+}
+```
+
+Then in the parent.html:
+
+```ts
+<app-child (someEvent)="someMethod($event)">
+```
+
+Then in the parent.ts:
+
+```ts
+
+someMethod(term:string){
+  console.log(term) // hello
+}
+```
