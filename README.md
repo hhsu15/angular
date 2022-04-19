@@ -618,6 +618,11 @@ class Car {
   // when you lay your constructor with access modifier it will automatically
   // assign attribute. e.g, this.color
   constructor(public color: string) {}
+
+  //// equivelent to
+  // constructor(color:string) {
+  // this.color = color
+  //}
 }
 
 car = new Car('red');
@@ -744,3 +749,219 @@ someMethod(term:string){
   console.log(term) // hello
 }
 ```
+
+#### WikiAPI
+
+Make a request to wikipedia:
+https://en.wikipedia.org/w/api.php?
+action=query&
+list=search&
+utf8=1&
+srsearch=space&
+format=json
+
+## Dependency Ingection
+
+Angular uses dependecy ingection. You use the @Injectable decorator and the Ingection container will be responsible to create and provide an istance when you ask for it.
+
+```ts
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class WikipediaService {
+  constructor() {}
+
+  search(term: string) {
+    return 'I am wiki search result';
+  }
+}
+
+@Component({
+  selector: 'app-root',
+  ...
+})
+export class AppComponent{
+  constructor(private wiki: WikipediaService) {}
+
+  this.wiki.search("some term")
+}
+```
+
+Dependency Ingection makes it easier for unit test because then you can easily mock the object and justt test the behavior of a function (i.e., avoid making actual http request)
+
+### Making HTTP requst
+
+Angular has a standard way of making http request. Refer to `wsearch` where it uses dependency injection to accquire http client object.
+
+```ts
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class WikipediaService {
+  constructor(private http: HttpClient) {}
+
+  search(term: string) {
+    return this.http.get('http://...') // will return an observable
+```
+
+## Security
+
+By default, when browser sees `<` and `>` it will render it as html element. To get around this (to show the actual `< >` charecters, you use:
+
+- `&lt;` it turns it into `<` and show it.
+
+- `&gt;` it turns it into `>` and show it.
+
+Angular Escaper does this (escaping html and make it like `&gt;span&lt;` and that's how you are seeing the plan text as `<spam>` on the browser, behind the scene they have actually been replaced into `&gt;` and `&lt;`.
+
+### Cross-site Scripting (XSS) Attacks
+
+- allows malicious users to run JS code on other user's browsers
+- the bad JS code can be used to steal credentials, make requests etc.
+- Angular has you covered - it will automatically escate html
+
+For example, a hacker can send you an html with javascript code that is going to take what you input, username, password etc and make an http request to another remote server to steal your personal info. Angular converts/escapes the html elements so to prevent XSS.
+
+XSS example:
+
+```js
+<img src="" onerror="some bad js code here...">
+
+```
+
+#### Show actual HTML element
+
+So by default, Angular replaces the tags to show pure text rather than html. Now if we do want to show html elements, how do we do that?
+
+We can use property binding syntax with innerHTML property to achieve that. For example,
+
+```ts
+
+<td [innerHTML]="page.description"></td>
+```
+
+Angular knows certain behaviors as XSS (such as the `onerror="..."`) and will automatically remove it so you are covered.
+
+## Rxjs
+
+A JS library to manage data. The concept is used by other programs outside of angular and even other languages - so understanding Rxjs is valuable.
+
+Notice, in angular Rxjs is often used instead of promise or async/await for handling async stuff.
+
+Rxjs makes building some kinds of features really easy comared to writing normal code.
+
+But it's hard. Probablly the hardest thing in the world of JS.
+
+The terminologies for Rxjs
+
+- Observable: tthis is the data source from the emitted event
+- Operator: the function to process input data. You can find a fill built-in operators [here](https://rxjs.dev/api)
+- Pipe/pipeline: A series of Operators
+- Observer: the handler for the data from the pipe; either a function to use the value from the pipe, or handles error that occured in the pipe.
+
+### RxJS in action
+
+You can use `out.stegrider.now.sh` to test RxJS.
+
+```js
+const { fromEvent } = Rx;
+const { map, pluck } from RxOperators;
+
+const input = document.createElement('input')
+const container = document.querySelector(".container")
+container.appendChild(input)
+
+// create an Observable
+const observable = fromEvent(input, "input")
+  .pipe(
+    //map(event => event.targett.value),
+    pluck('target', 'value'),  // does the same thing as above
+    map(value => parseInt(value)),
+    map(value => {
+      if(isNaN(value)){
+        throw new Error("Enter a number!");
+      }
+      return value;
+    })
+  )
+// Observer (the acutal observer is inside the subscribe, it can be either an object, or a function)
+observable.subscribe(
+  {
+    next(value){
+      console.log(`Your value is ${value}`)
+    },
+
+    complete() {
+
+    }
+    error(err){
+      console.error("Bad thing happen!", err.message)
+    }
+  }
+)
+
+observable
+
+```
+
+Just dive into the lower level of Obvervable..
+
+```js
+const { Observable } = Rx;
+
+const observable = new Observable(subscriber => {
+  subscriber.next('I am the value'); // the value that goes into the pipe
+
+  subscriber.complete(); //
+
+  subscriber.error(new Error('I am an error'));
+}); // here the pipe function is optional
+
+observable.subscribe(
+  // this is an alternative way
+  value => console.log(value), // next
+  err => console.error('Bad thing', err.message), //error
+  () => console.log('completed') //complete
+);
+```
+
+#### Unicast and Multicast Observables
+
+In _Unicast_ Observable, if we have a pipe set up with multiple Observer (i.e., when you use observable.subscribe()), it emits a separate set of values for each obsever that subscribes. All of the operators in a pipe will be executed for each observer - this can easily lead to bad behavior (e.g., an operator that makes network request multiple times due to multiple obversers)
+
+In _Multicast_ Observable, it emits a single set of value for all observers that subscirbe - all the operators in a pipe only get executed once. However, it has a big gotcha. If you add a subscirber later on it might not receive the values that have already been gone through the pipe!
+
+#### Hot and Cold Observables
+
+Hot Observable: Single event stream shared for all subscribers old and new -> sometimes interchangeble with Multicast
+
+Cold Observable: Event stream recreated for each new subscriber - sometimes interchageble with Unicast
+
+### TypeScript with RxJS
+
+As it turns out, Observable is a generic class (hintt: recall the <T>). You can use the <> to annotate the type of value emitted from an observable if you are using typescirpt. And typescript will know what type should be coming out of the observer which is neat!
+
+```ts
+interface Car {
+  make: string;
+  year: number;
+}
+
+const observable = new Observable<Car>(observer => {
+  observer.next({
+    make: 'toyota',
+    year: 2020
+  });
+}).pipe(pluck('make'));
+
+// typescript will know that this value should be a string
+observable.subscribe(value => {
+  console.log(value);
+});
+```
+
+Refer to `wsearch/src/app/wikipedia.service.ts`
