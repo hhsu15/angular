@@ -965,3 +965,66 @@ observable.subscribe(value => {
 ```
 
 Refer to `wsearch/src/app/wikipedia.service.ts`
+
+### Excercise
+
+Refer to `photos` to see the basic angular way of building an app that:
+
+- have a component, say, a button
+- have a service tto fetch data from internet, say, get photos
+- show it on the browser
+
+## Augular Forms
+
+Some natures for Forms,
+
+- needs validation
+- needs messaging to help user
+- need to change frequently without having to rewrite a ton of app logic
+
+Angular has two separate and different systems for building forms:
+
+- `Reactive Forms`
+- `Template Forms`
+
+We can technically implement forms with just what have covered in this course but Angular forms will make building forms easier!
+
+### Reactive Forms
+
+Refer to `creditcard`.
+
+Remember to import the `ReactiveFormsModule` into the app.module.ts
+
+```ts
+import { ReactiveFormsModule } from '@angular/forms';
+
+@NgModule({
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
+ ...
+})
+export class AppModule {}
+
+```
+
+Wire up the "ReactiveFormsModule".
+
+When we import the `ReactiveFormModule`, angular is going to assume the <form> element will be control by the instance of `FormGroup`. We will need to bind the `fromGroup` property to the instance of FormControl.
+A basic example:
+
+```ts
+<form [formGroup]="cardForm">
+  <input formControlName="name">
+</form>
+
+<div>{{ cardForm.value }}<div>
+<div>{{ cardForm.valid }}<div>
+```
+
+You can use the Validator to validate the form using some built-in functions, such as:
+
+```ts
+name: new FormControl('', [
+  Validators.required, // required field
+  Validators.minLength(3) // at least 3 characters
+]);
+```

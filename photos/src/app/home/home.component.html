@@ -1,0 +1,5 @@
+<button class="button" (click)="onGetPhoto()">Get Photo</button>
+<div>
+  <img *ngIf="photoUrl" [src]="photoUrl" />
+  <!-- {{ photoUrl | json }} -->
+</div>
