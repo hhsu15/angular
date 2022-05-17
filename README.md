@@ -1028,3 +1028,184 @@ name: new FormControl('', [
   Validators.minLength(3) // at least 3 characters
 ]);
 ```
+
+The FormControl obj has some built in attributes. Such as:
+
+- dirty
+- disabled
+- enabled
+- valid
+- parent
+- pending
+  You can console log it to see:
+
+```ts
+console.log(this.cardForm.get('name')); //  a FormCountrol "name"
+```
+
+To see a full list of description: [link](https://angular.io/api/forms/AbstractControl)
+
+#### ngSubmit
+
+To submit form in Reactive Form, we use a special thing called `ngSubmit`.
+
+```
+<form (ngSubmit)="onSubmit()">
+...
+</form>
+
+```
+
+### Input Masking
+
+Input Masking means to automatically format the input for the users to improve user experience.
+
+Refer to `creditcard`. As an example to control date input.
+
+Create a class using
+
+```ts
+ng generate class DateFormControl
+```
+
+We are then going to use this class and extends/inherit from FormControl
+
+Here, something particular interesting is the method called `setValue`, which we are overriding. There is one property in the signature called `emitModelToViewChange: boolean`.
+
+If we set `emitModelToViewChange: boolean` to true, it means it will update the value in the input as well, which in turn overrides the user input value!!
+
+```ts
+// if the pattern matches, set the value to it's original value (this.value) and return -> this will basically stop the user to enter anything
+setValue(value: string, options: any) {
+    if (value.match(/[^0-9|\/]/gi)) {
+      super.setValue(this.value, {
+        ...options,
+        emitModelToViewChange: true
+      });
+      return;
+    }
+```
+
+We can also use a 3rd party library for more robust input masking. Refer to the documentation.
+
+```sh
+npm install --save ngx-mask
+```
+
+However, there are still some downsites - it does not change the underlying data but only the input view.
+
+### Template Form
+
+Refer tto `emailForm`.
+
+In Template Forms, most of the form logic is driven by template(.html) file. It's more appropriate for simple forms.
+
+To use Template Forms, simply import `FormsModule` tto the app.module.ts file.
+
+#### ngModel
+
+Use the `ngModel` directive to track the value of the input element. And anytime the value changes we want to update the propery `email` on our component class. It's important to note that you also need to add the attribute name for it to work properly.
+
+```html
+<form>
+  <input name="email" [(ngModel)]="email" />
+</form>
+```
+
+This is refered to as "Two way binding". It is a combination of property binding and event binding. It means - take a look at the email property, everytime the value of the property changes, update the value on the input. Likewise, everytime the value of the input is updated by the user, change the value of the `email` property.
+
+#### ngForm
+
+In Template Forms, Angular actually still creates the FormGroup and FormControls that we do in Reactive Forms by ourselves. In Template form, we can gain control by using element reference using `#` plus `ngForm`, by doing so, you can use the FormGroup property such as `.valid` which we saw in the Reactive Forms- because behind the scenes it is the same FormGroup.
+
+```html
+<form #emailForm="ngForm">
+  <input name="email" [(ngModel)]="email" />
+</form>
+Form values: {{emailForm.value | json}} Errors:
+{{emailForm.controls.email.errors}}
+```
+
+#### Input validations
+
+The way Template forms accomplish validation is to use attributes, which have similar behavior as the Validators from Reactive Forms, for example:
+
+```html
+<form #emailForm="ngForm">
+  <input
+    type="email"
+    required
+    pattern=".+@.+\..+"
+    name="myEmail"
+    [(ngModel)]="email"
+  />
+</form>
+```
+
+Find the full listt of attributes in https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Constraint_validation
+
+#### Get access tp FormControl
+
+Similar to the ngForm, you can also make a reference to the FormControl using `#controlName="ngModel"`
+
+```html
+<input #emailControl="ngModel" />
+```
+
+### Custom Validator
+
+Refer to `mathForm`.
+
+When you need to add a validator that checks multiple form controls, we can create a custom validator and apply it to the entire form group.
+
+```ts
+myForm = new FormGroup(
+  a: new FormControl(),
+  b: new FormControl(),
+  [
+    (form:AbstractControl)=>{return {addition: true}},
+    ...
+  ]
+)
+```
+
+Be sure to make a class for your custom validators so it can be reusbale in nature. Refer to `mathForm/src/app/math-validators.ts`
+
+### RxJs with Reactive Forms
+
+Refer to `mathForm`. There are some attributes of the FormGroup that are of type of Observable. Use them within the `ngOnInit` method so you get the response everytime some change event happens.
+
+`.statusChanges` attribute is an observable.
+Below will log either VALID or INVALID for your form everytime you make a change to your form control.
+
+```ts
+ngOnInit(){
+// mathForm being an obj of FormGroup
+  this.mathForm.statusChanges.subscribe(value => {
+    console.log(value);
+  });
+}
+```
+
+This example shows how you can get values from a FormGroup when value chages when you use it in a custom directive:
+
+```ts
+
+mport { Directive, ElementRef } from '@angular/core';
+import { NgControl } from '@angular/forms';
+
+@Directive({
+  selector: '[appAnswerHighlight]'
+})
+export class AnswerHighlightDirective {
+  constructor(private el: ElementRef, private controlName: NgControl) {
+    // console.log(controlName);
+  }
+  ngOnInit() {
+    // .parent will bump you to the parent which often time is the FormGroup
+    this.controlName.control?.parent?.valueChanges.subscribe(value => {
+      console.log(value);
+    });
+  }
+
+```
