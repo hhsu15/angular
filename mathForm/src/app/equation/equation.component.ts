@@ -2,7 +2,7 @@ import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MathValidators } from '../math-validators';
-import { filter, delay, scan } from 'rxjs/operators';
+import { filter, delay, scan, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-equation',
@@ -27,6 +27,11 @@ export class EquationComponent implements OnInit {
       .pipe(
         filter(value => value === 'VALID'),
         delay(500),
+        map(value => {
+          this.mathForm.patchValue({
+            answer: ''
+          });
+        }),
         // scan
         // https://www.learnrxjs.io/learn-rxjs/operators/transformation/scan
         // first argument is the previous value

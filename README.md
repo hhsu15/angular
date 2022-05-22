@@ -1187,7 +1187,7 @@ ngOnInit(){
 }
 ```
 
-This example shows how you can get values from a FormGroup when value chages when you use it in a custom directive:
+This example shows how you can access a FormGroup when value chages when you use it in a custom directive. It is done with dependency injection - NgControl
 
 ```ts
 
